@@ -1,24 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { Header } from "./components/Header";
+import { Table } from "./components/Table";
+import "./App.css";
 
 function App() {
+  const [isOn, setIsOn] = useState(false);
+  const [tableSize, setTableSize] = useState(4);
+
+  const setGameSize = (value: number) => {
+    setTableSize(value);
+  };
+
+  const setGameStatus = (value: boolean) => {
+    setIsOn(value);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header
+        isOn={isOn}
+        setGameSize={setGameSize}
+        setGameStatus={setGameStatus}
+      />
+      <Table isOn={isOn} tableSize={tableSize} />
     </div>
   );
 }
