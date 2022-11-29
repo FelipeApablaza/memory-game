@@ -1,16 +1,16 @@
 interface props {
-  isOn: boolean;
+  gameStarted: boolean;
   setGameSize(value: number): void;
   setGameStatus(value: boolean): void;
 }
 
-export const Header = ({ isOn, setGameSize, setGameStatus }: props) => {
+export const Header = ({ gameStarted, setGameSize, setGameStatus }: props) => {
   const startButtonHandler = () => {
-    setGameStatus(!isOn);
+    setGameStatus(!gameStarted);
   };
 
   const gameSizeHandler = (value: number) => {
-    if (isOn) return;
+    if (gameStarted) return;
     setGameSize(value);
   };
   return (

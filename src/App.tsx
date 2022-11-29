@@ -4,7 +4,7 @@ import { Table } from "./components/Table";
 import "./App.css";
 
 function App() {
-  const [isOn, setIsOn] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const [tableSize, setTableSize] = useState(4);
 
   const setGameSize = (value: number) => {
@@ -12,17 +12,17 @@ function App() {
   };
 
   const setGameStatus = (value: boolean) => {
-    setIsOn(value);
+    setGameStarted(value);
   };
 
   return (
     <div>
       <Header
-        isOn={isOn}
+        gameStarted={gameStarted}
         setGameSize={setGameSize}
         setGameStatus={setGameStatus}
       />
-      <Table isOn={isOn} tableSize={tableSize} />
+      <Table gameStarted={gameStarted} tableSize={tableSize} />
     </div>
   );
 }
