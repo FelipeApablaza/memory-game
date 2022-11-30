@@ -1,3 +1,4 @@
+import { CardContainer } from "../styled/Card.styles";
 interface props {
   index: number;
   cardId: number;
@@ -17,8 +18,8 @@ export const Card = ({
   };
 
   return (
-    <div onClick={cardHandler}>
+    <CardContainer onClick={cardHandler}>
       Card Symbol {symbolId} - {isFlipped ? 1 : 0}
-    </div>
+    </CardContainer>
   );
 };

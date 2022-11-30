@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card } from "./Card";
-
-interface props {
+import { TableContainer } from "../styled/Table.styles";
+interface gameProps {
   gameStarted: boolean;
+  winHandler(mistakes: number): void;
   tableSize: number;
 }
 
@@ -12,10 +13,12 @@ interface cardProps {
   isFlipped: boolean;
 }
 
-export const Table = ({ gameStarted, tableSize }: props) => {
+export const Table = ({ gameStarted, winHandler, tableSize }: gameProps) => {
   const [cardArray, setCardArray] = useState<cardProps[]>([]);
   const [firstCardIdx, setFirstCardIdx] = useState<number>();
   const [secondCardIdx, setSecondCardIdx] = useState<number>();
+  const [matches, setMatches] = useState<number>(0);
+  const [mistakes, setMistakes] = useState<number>(0);
 
   const getRandomNumber = (tableSize: number) => {
     return Math.floor(Math.random() * tableSize ** 2);
@@ -26,7 +29,11 @@ export const Table = ({ gameStarted, tableSize }: props) => {
     else return myCardId - tableSize ** 2 / 2;
   };
 
-  const chooseCard = (index: number) => {
+  const chooseCard = (
+    index: number,
+    firstCardIdx?: number,
+    secondCardIdx?: number
+  ) => {
     if (!gameStarted) return; // not started
     else if (typeof firstCardIdx === "undefined") {
       setFirstCardIdx(index);
@@ -38,7 +45,6 @@ export const Table = ({ gameStarted, tableSize }: props) => {
   };
 
   const flipCard = (index: number) => {
-    console.log(index);
     setCardArray((prevArray) => {
       const newCardArray = prevArray.map((card, mapIdx) => {
         const newCard = { ...card };
@@ -55,26 +61,23 @@ export const Table = ({ gameStarted, tableSize }: props) => {
   const matchHandler = (firstCardIdx: number, secondCardIdx: number) => {
     const firstCardSymbolId = cardArray[firstCardIdx].symbolId;
     const secondCardSymbolId = cardArray[secondCardIdx].symbolId;
-    setTimeout(() => {
-      if (firstCardSymbolId !== secondCardSymbolId) {
+
+    if (firstCardSymbolId !== secondCardSymbolId) {
+      setTimeout(() => {
+        setMistakes((prevMistakes) => prevMistakes + 1);
         flipCard(firstCardIdx);
         flipCard(secondCardIdx);
-      }
+        setFirstCardIdx(undefined);
+        setSecondCardIdx(undefined);
+      }, 1500);
+    } else {
+      setMatches((prevMatches) => prevMatches + 1);
       setFirstCardIdx(undefined);
       setSecondCardIdx(undefined);
-    }, 1500);
+    }
   };
 
-  useEffect(() => {
-    if (
-      typeof firstCardIdx !== "undefined" &&
-      typeof secondCardIdx !== "undefined"
-    ) {
-      matchHandler(firstCardIdx, secondCardIdx);
-    }
-  }, [firstCardIdx, secondCardIdx]);
-
-  useEffect(() => {
+  const prepareCards = () => {
     const cardIdsList: number[] = [];
     const newCardArray = [...Array(tableSize ** 2)].map(() => {
       while (true) {
@@ -87,10 +90,28 @@ export const Table = ({ gameStarted, tableSize }: props) => {
       }
     });
     setCardArray(newCardArray);
-  }, [tableSize]);
+    setMatches(0);
+  };
+
+  useEffect(() => {
+    if (
+      typeof firstCardIdx !== "undefined" &&
+      typeof secondCardIdx !== "undefined"
+    ) {
+      matchHandler(firstCardIdx, secondCardIdx);
+    }
+  }, [firstCardIdx, secondCardIdx]);
+
+  useEffect(() => {
+    if (!gameStarted) prepareCards();
+  }, [tableSize, gameStarted]);
+
+  useEffect(() => {
+    if (matches === tableSize ** 2 / 2) winHandler(mistakes);
+  }, [matches]);
 
   return (
-    <div>
+    <TableContainer>
       {cardArray.map(({ cardId, isFlipped, symbolId }, index) => (
         <Card
           key={index}
@@ -101,6 +122,6 @@ export const Table = ({ gameStarted, tableSize }: props) => {
           chooseCard={chooseCard}
         />
       ))}
-    </div>
+    </TableContainer>
   );
 };

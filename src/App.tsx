@@ -5,14 +5,21 @@ import "./App.css";
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
+  const [win, setWin] = useState(false);
   const [tableSize, setTableSize] = useState(4);
 
-  const setGameSize = (value: number) => {
-    setTableSize(value);
+  const setGameSize = (size: number) => {
+    setTableSize(size);
   };
 
   const setGameStatus = (value: boolean) => {
     setGameStarted(value);
+    if (value) setWin(false);
+  };
+
+  const winHandler = (mistakes: number) => {
+    console.log("Mistakes:", mistakes);
+    setWin(true);
   };
 
   return (
@@ -21,8 +28,14 @@ function App() {
         gameStarted={gameStarted}
         setGameSize={setGameSize}
         setGameStatus={setGameStatus}
+        tableSize={tableSize}
+        win={win}
       />
-      <Table gameStarted={gameStarted} tableSize={tableSize} />
+      <Table
+        gameStarted={gameStarted}
+        winHandler={winHandler}
+        tableSize={tableSize}
+      />
     </div>
   );
 }
